@@ -1,0 +1,13 @@
+.PHONY: test
+test:
+	mkdir -p tmp && \
+	cd tmp && \
+	cp $(CURDIR)/MAKEFILE.nimsforestfolders . && \
+	cp -r $(CURDIR)/docs . && \
+	make -f MAKEFILE.nimsforestfolders nimsforestfolders-hello && \
+	make -f MAKEFILE.nimsforestfolders nimsforestfolders-create-folders \
+		JSON_FILE=docs/templates/organization-structure.json \
+		BASE_PATH=./test-output && \
+	echo "=== Verifying created structure ===" && \
+	find test-output -type d | sort && \
+	echo "=== Test completed successfully ==="

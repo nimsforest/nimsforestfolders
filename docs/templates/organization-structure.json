@@ -1,0 +1,56 @@
+{
+  "organization": {
+    "customer-value-chain": {
+      "marketing": [
+        "target-audiences",
+        "messaging", 
+        "channels",
+        "campaigns"
+      ],
+      "sales": [
+        "pipeline",
+        "qualification",
+        "territories", 
+        "processes"
+      ],
+      "operations": [
+        "processes",
+        "quality",
+        "supply-chain",
+        "delivery"
+      ],
+      "accounting": [
+        "reporting",
+        "analysis",
+        "compliance",
+        "budgeting"
+      ]
+    },
+    "strategic-direction-and-financing": {
+      "strategy": [
+        "planning",
+        "objectives",
+        "analysis",
+        "roadmaps"
+      ],
+      "finance": [
+        "budgeting",
+        "forecasting",
+        "investments",
+        "reporting"
+      ],
+      "governance": [
+        "policies",
+        "procedures",
+        "risk-management",
+        "compliance"
+      ],
+      "legal": [
+        "contracts",
+        "intellectual-property",
+        "regulatory",
+        "disputes"
+      ]
+    }
+  }
+}

@@ -1,0 +1,34 @@
+# NimsforestFolders - Generic Folder Structure Creation Tool
+# Provides reusable folder structure creation from JSON templates
+
+.PHONY: nimsforestfolders-hello nimsforestfolders-create-folders
+
+nimsforestfolders-hello:
+	@echo "=== NimsforestFolders Tool ==="
+	@echo "Generic folder structure creation from JSON templates"
+	@echo ""
+	@echo "Usage:"
+	@echo "  make nimsforestfolders-create-folders JSON_FILE=path/to/structure.json BASE_PATH=output/path"
+	@echo ""
+	@echo "Example:"
+	@echo "  make nimsforestfolders-create-folders \\"
+	@echo "    JSON_FILE=docs/templates/organization-structure.json \\"
+	@echo "    BASE_PATH=./docs/organization"
+
+# Generic function to create folder structure from JSON
+# Currently works with organization-structure.json format
+# Parameters:
+#   JSON_FILE: Path to JSON file containing structure
+#   BASE_PATH: Base path where folders should be created
+nimsforestfolders-create-folders:
+	@if [ -z "$(JSON_FILE)" ]; then echo "Error: JSON_FILE parameter required"; exit 1; fi
+	@if [ -z "$(BASE_PATH)" ]; then echo "Error: BASE_PATH parameter required"; exit 1; fi
+	@echo "Creating folder structure from $(JSON_FILE)..."
+	@mkdir -p "$(BASE_PATH)"
+	@cat "$(JSON_FILE)" | jq -r '.organization | to_entries[] | .key as $$dept | .value | to_entries[] | .key as $$func | .value[] | "\($$dept)/\($$func)/\(.)"' | while read path; do \
+		if [ -n "$$path" ]; then \
+			mkdir -p "$(BASE_PATH)/$$path"; \
+			echo "  ✓ Created: $$path"; \
+		fi; \
+	done
+	@echo "✓ Folder structure created in $(BASE_PATH)"
