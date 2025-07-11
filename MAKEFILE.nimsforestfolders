@@ -1,14 +1,20 @@
 # NimsforestFolders - Generic Folder Structure Creation Tool
 # Provides reusable folder structure creation from JSON templates
 
-.PHONY: nimsforestfolders-hello nimsforestfolders-create-folders nimsforestfolders-addtomainmake
+.PHONY: nimsforestfolders-hello nimsforestfolders-create-folders nimsforestfolders-addtomainmake nimsforestfolders-lint
 
 nimsforestfolders-hello:
 	@echo "=== NimsforestFolders Tool ==="
-	@echo "Generic folder structure creation from JSON templates"
+	@echo "Generic folder structure creation and validation from JSON templates"
+	@echo ""
+	@echo "Commands:"
+	@echo "  nimsforestfolders-create-folders - Create folder structure from JSON template"
+	@echo "  nimsforestfolders-lint          - Validate existing structure against JSON template"
+	@echo "  nimsforestfolders-addtomainmake - Add tool to project's main Makefile"
 	@echo ""
 	@echo "Usage:"
-	@echo "  make nimsforestfolders-create-folders JSON_FILE=path/to/structure.json BASE_PATH=output/path"
+	@echo "  make nimsforestfolders-create-folders JSON_FILE=template.json BASE_PATH=output/path"
+	@echo "  make nimsforestfolders-lint JSON_FILE=template.json BASE_PATH=existing/path"
 	@echo ""
 	@echo "Example:"
 	@echo "  make nimsforestfolders-create-folders \\"
@@ -48,3 +54,42 @@ nimsforestfolders-addtomainmake:
 		fi; \
 	fi
 	@echo "✓ NimsforestFolders targets available via main Makefile"
+
+# Validate existing folder structure against JSON template
+# Parameters:
+#   JSON_FILE: Path to JSON file containing expected structure
+#   BASE_PATH: Base path where folders should be validated
+nimsforestfolders-lint:
+	@if [ -z "$(JSON_FILE)" ]; then echo "Error: JSON_FILE parameter required"; exit 1; fi
+	@if [ -z "$(BASE_PATH)" ]; then echo "Error: BASE_PATH parameter required"; exit 1; fi
+	@if [ ! -f "$(JSON_FILE)" ]; then echo "Error: JSON_FILE '$(JSON_FILE)' not found"; exit 1; fi
+	@if [ ! -d "$(BASE_PATH)" ]; then echo "Error: BASE_PATH '$(BASE_PATH)' not found"; exit 1; fi
+	@echo "=== NimsforestFolders Structure Validation ==="
+	@echo "Validating structure in $(BASE_PATH) against $(JSON_FILE)..."
+	@echo ""
+	@temp_file=$$(mktemp); \
+	cat "$(JSON_FILE)" | jq -r '.organization | to_entries[] | .key as $$dept | .value | to_entries[] | .key as $$func | .value[] | "\($$dept)/\($$func)/\(.)"' | while read path; do \
+		if [ -n "$$path" ]; then \
+			full_path="$(BASE_PATH)/$$path"; \
+			if [ -d "$$full_path" ]; then \
+				echo "  ✓ $$path"; \
+				echo "OK" >> "$$temp_file"; \
+			else \
+				echo "  ✗ $$path (missing)"; \
+				echo "MISSING" >> "$$temp_file"; \
+			fi; \
+		fi; \
+	done; \
+	echo ""; \
+	total_count=$$(wc -l < "$$temp_file"); \
+	missing_count=$$(grep -c "MISSING" "$$temp_file" 2>/dev/null || echo 0); \
+	if [ $$missing_count -gt 0 ]; then \
+		echo "❌ Structure validation failed"; \
+		echo "   Missing $$missing_count out of $$total_count expected folders"; \
+		rm -f "$$temp_file"; \
+		exit 1; \
+	else \
+		echo "✅ All expected folders exist"; \
+		echo "   Validated $$total_count folders successfully"; \
+		rm -f "$$temp_file"; \
+	fi

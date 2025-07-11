@@ -26,12 +26,23 @@ make -f nimsforestfolders/MAKEFILE.nimsforestfolders nimsforestfolders-addtomain
 make nimsforestfolders-create-folders \
   JSON_FILE=path/to/structure.json \
   BASE_PATH=output/directory
+
+# Validate existing structure against template
+make nimsforestfolders-lint \
+  JSON_FILE=path/to/structure.json \
+  BASE_PATH=existing/directory
 ```
 
-## Example
+## Examples
 
 ```bash
+# Create organizational structure
 make nimsforestfolders-create-folders \
+  JSON_FILE=nimsforestfolders/docs/templates/organization-structure.json \
+  BASE_PATH=./docs/organization
+
+# Validate existing structure
+make nimsforestfolders-lint \
   JSON_FILE=nimsforestfolders/docs/templates/organization-structure.json \
   BASE_PATH=./docs/organization
 ```

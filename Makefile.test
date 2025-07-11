@@ -23,4 +23,19 @@ test:
 		BASE_PATH=./test-output && \
 	echo "=== Verifying created structure ===" && \
 	find test-output -type d | sort && \
+	echo "=== Testing lint validation (should pass) ===" && \
+	make nimsforestfolders-lint \
+		JSON_FILE=docs/templates/organization-structure.json \
+		BASE_PATH=./test-output && \
+	echo "=== Testing lint validation on incomplete structure (should fail) ===" && \
+	mkdir -p test-incomplete && \
+	mkdir -p test-incomplete/customer-value-chain/marketing && \
+	if make nimsforestfolders-lint \
+		JSON_FILE=docs/templates/organization-structure.json \
+		BASE_PATH=./test-incomplete 2>/dev/null; then \
+		echo "ERROR: Lint should have failed on incomplete structure"; \
+		exit 1; \
+	else \
+		echo "✓ Lint correctly failed on incomplete structure"; \
+	fi && \
 	echo "=== Test completed successfully ==="
