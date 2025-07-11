@@ -43,5 +43,5 @@ Templates are stored in `docs/templates/` and contain JSON structures that defin
 Designed to be used as a Git submodule in nimsforest components:
 
 ```bash
-git submodule add https://github.com/nimsforest/nimsforestfolders.git nimsforestfolders
+git submodule add https://github.com/nimsforest/nimsforestfolders.git tools/nimsforestfolders
 ```
