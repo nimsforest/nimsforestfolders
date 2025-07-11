@@ -1,7 +1,7 @@
 # NimsforestFolders - Generic Folder Structure Creation Tool
 # Provides reusable folder structure creation from JSON templates
 
-.PHONY: nimsforestfolders-hello nimsforestfolders-create-folders
+.PHONY: nimsforestfolders-hello nimsforestfolders-create-folders nimsforestfolders-addtomainmake
 
 nimsforestfolders-hello:
 	@echo "=== NimsforestFolders Tool ==="
@@ -32,3 +32,19 @@ nimsforestfolders-create-folders:
 		fi; \
 	done
 	@echo "✓ Folder structure created in $(BASE_PATH)"
+
+nimsforestfolders-addtomainmake:
+	@echo "=== Adding NimsforestFolders to main Makefile ==="
+	@INCLUDE_PATH=$${NIMSFORESTFOLDERS_INCLUDE_PATH:-nimsforestfolders/MAKEFILE.nimsforestfolders}; \
+	if [ ! -f Makefile ]; then \
+		echo "Creating main Makefile..."; \
+		echo "-include $$INCLUDE_PATH" > Makefile; \
+	else \
+		if ! grep -q "$$INCLUDE_PATH" Makefile; then \
+			echo "Adding include to existing Makefile..."; \
+			echo "-include $$INCLUDE_PATH" >> Makefile; \
+		else \
+			echo "✓ Already included in Makefile"; \
+		fi; \
+	fi
+	@echo "✓ NimsforestFolders targets available via main Makefile"

@@ -1,11 +1,24 @@
 .PHONY: test
 test:
+	rm -rf tmp && \
 	mkdir -p tmp && \
 	cd tmp && \
 	cp $(CURDIR)/MAKEFILE.nimsforestfolders . && \
 	cp -r $(CURDIR)/docs . && \
+	echo "=== Testing hello command ===" && \
 	make -f MAKEFILE.nimsforestfolders nimsforestfolders-hello && \
-	make -f MAKEFILE.nimsforestfolders nimsforestfolders-create-folders \
+	echo "=== Testing addtomainmake command ===" && \
+	NIMSFORESTFOLDERS_INCLUDE_PATH=MAKEFILE.nimsforestfolders make -f MAKEFILE.nimsforestfolders nimsforestfolders-addtomainmake && \
+	echo "=== Verifying Makefile was created ===" && \
+	test -f Makefile && \
+	grep -q "MAKEFILE.nimsforestfolders" Makefile && \
+	echo "✓ Makefile correctly includes nimsforestfolders" && \
+	echo "=== Testing duplicate include prevention ===" && \
+	NIMSFORESTFOLDERS_INCLUDE_PATH=MAKEFILE.nimsforestfolders make -f MAKEFILE.nimsforestfolders nimsforestfolders-addtomainmake && \
+	[ $$(grep -c "MAKEFILE.nimsforestfolders" Makefile) -eq 1 ] && \
+	echo "✓ Duplicate include prevented" && \
+	echo "=== Testing folder creation via main Makefile ===" && \
+	make nimsforestfolders-create-folders \
 		JSON_FILE=docs/templates/organization-structure.json \
 		BASE_PATH=./test-output && \
 	echo "=== Verifying created structure ===" && \

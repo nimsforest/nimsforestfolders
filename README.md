@@ -6,17 +6,26 @@ Generic folder structure creation tool for the Nimsforest ecosystem.
 
 Creates folder structures from JSON templates using jq for parsing. Designed to be reusable across nimsforest components.
 
+## Quick Start
+
+```bash
+# Check system and view usage
+make -f nimsforestfolders/MAKEFILE.nimsforestfolders nimsforestfolders-hello
+
+# Auto-add to your project's main Makefile
+make -f nimsforestfolders/MAKEFILE.nimsforestfolders nimsforestfolders-addtomainmake
+```
+
 ## Usage
 
 ```bash
-# Include in your Makefile
+# Include in your Makefile (auto-added by addtomainmake command)
 -include nimsforestfolders/MAKEFILE.nimsforestfolders
 
 # Create folders from JSON template
 make nimsforestfolders-create-folders \
   JSON_FILE=path/to/structure.json \
-  BASE_PATH=output/directory \
-  JSON_QUERY='jq query to extract paths'
+  BASE_PATH=output/directory
 ```
 
 ## Example
@@ -24,8 +33,7 @@ make nimsforestfolders-create-folders \
 ```bash
 make nimsforestfolders-create-folders \
   JSON_FILE=nimsforestfolders/docs/templates/organization-structure.json \
-  BASE_PATH=./docs/organization \
-  JSON_QUERY='.organization | to_entries[] | .key as $dept | .value | to_entries[] | .key as $func | .value[] | "\($dept)/\($func)/\(.)"'
+  BASE_PATH=./docs/organization
 ```
 
 ## Templates
